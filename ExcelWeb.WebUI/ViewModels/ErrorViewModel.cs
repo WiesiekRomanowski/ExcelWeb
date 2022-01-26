@@ -1,6 +1,6 @@
 using System;
 
-namespace ExcelWeb.WebUI.Models
+namespace ExcelWeb.WebUI.ViewModels
 {
     public class ErrorViewModel
     {

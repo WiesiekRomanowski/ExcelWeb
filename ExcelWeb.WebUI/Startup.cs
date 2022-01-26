@@ -1,3 +1,4 @@
+using ExcelWeb.SL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -22,6 +23,8 @@ namespace ExcelWeb.WebUI
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddServices();
+            services.AddMappings();
             services.AddControllersWithViews();
         }
 

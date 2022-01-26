@@ -1,11 +1,7 @@
-﻿using ExcelWeb.WebUI.Models;
+﻿using ExcelWeb.WebUI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExcelWeb.WebUI.Controllers
 {
@@ -20,12 +16,7 @@ namespace ExcelWeb.WebUI.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return RedirectToAction("AddFormData", "Excel");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

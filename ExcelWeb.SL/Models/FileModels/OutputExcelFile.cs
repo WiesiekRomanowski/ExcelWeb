@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace ExcelWeb.WebUI.ViewModels
+namespace ExcelWeb.SL.Models.FileModels
 {
-    public class ExcelFileViewModel
+    public class OutputExcelFile
     {
         public IFormFile File { get; set; }
     }

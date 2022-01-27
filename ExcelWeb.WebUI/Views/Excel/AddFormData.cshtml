@@ -1,8 +1,17 @@
-﻿@{
+﻿@model ExcelFileViewModel
+
+@{
     ViewData["Title"] = "Excel Form Converter";
 }
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <p>Upload file...</p>
+    <form asp-action="AddFormData" method="post" enctype="multipart/form-data">
+        <div class="uk-margin">
+            <label asp-for="File">File:</label>
+            <input asp-for="File" class="uk-button uk-button-default" />
+            <div><span asp-validation-for="File" class="uk-text-danger"></span></div>
+        </div>
+        <button type="submit" class="uk-button uk-button-primary">Upload</button>
+    </form>
 </div>

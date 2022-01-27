@@ -8,7 +8,9 @@ namespace ExcelWeb.SL
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddTransient<IFileService, FileService>();
             services.AddTransient<IExcelService, ExcelService>();
+            services.AddTransient<IFormService, FormService>();
 
             return services;
         }

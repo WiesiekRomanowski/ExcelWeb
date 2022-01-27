@@ -1,10 +1,12 @@
-﻿using ExcelWeb.SL.Models;
-using System.Threading.Tasks;
+﻿using OfficeOpenXml;
+using System.Collections.Generic;
 
 namespace ExcelWeb.SL.Interfaces
 {
     public interface IExcelService
     {
-        Task<OutputExcelFile> ConvertAsync(InputExcelFile inputModel);
+        ExcelPackage GetExcelFile(byte[] fileData);
+        ExcelWorksheet GetExcelWorksheet(ExcelPackage excelFilePackage, string worksheetName);
+        List<string> LoopExcel(byte[] fileData);
     }
 }

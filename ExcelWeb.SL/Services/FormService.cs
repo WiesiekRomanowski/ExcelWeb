@@ -4,8 +4,6 @@ using ExcelWeb.SL.Models.InputModels;
 using ExcelWeb.SL.Models.OutputModels;
 using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace ExcelWeb.SL.Services
 {
@@ -22,20 +20,17 @@ namespace ExcelWeb.SL.Services
 
         private ExcelPackage _excelFile;
         private ExcelWorksheet _excelWorksheet;
+        private InputForm _inputForm;
 
         public InputForm GetInputFormData(ExcelFileModel fileModel)
         {
             try
             {
-                SetExcelFile(fileModel.FileData);
-                SetExcelWorksheet();
+                //SetExcelFile(fileModel.FileData);
+                //SetExcelWorksheet();
+                SetInputForm(fileModel.FileData);
 
-                var valA1 = _excelWorksheet.Cells["A1"].Value.ToString();
-                var valI1 = _excelWorksheet.Cells["I1"].Value.ToString();
-                var valI2 = _excelWorksheet.Cells["I2"].Value.ToString();
-                var formatted = valI2.Split(';');
-
-                return new InputForm();
+                return _inputForm;
             }
             catch (Exception)
             {
@@ -53,6 +48,24 @@ namespace ExcelWeb.SL.Services
             {
                 throw;
             }
+        }
+
+        private void SetInputForm(byte[] fileData)
+        {
+            _inputForm = new InputForm
+            {
+                Questionnaries = _excelService.LoopExcel(fileData)
+            };
+        }
+
+        //TODO: tymczasowo na inputForm
+        public byte[] GetOutputExcelFile(InputForm inputForm)
+        {
+            using var excelPackage = new ExcelPackage();
+            var worksheet = excelPackage.Workbook.Worksheets.Add("Sheet1");
+
+            worksheet.Cells["A1"].LoadFromCollection(inputForm.Questionnaries, true);
+            return excelPackage.GetAsByteArray();
         }
 
         private void SetExcelFile(byte[] fileData)

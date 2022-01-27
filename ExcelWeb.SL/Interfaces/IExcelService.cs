@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using ExcelWeb.SL.Models.Common;
+using OfficeOpenXml;
 using System.Collections.Generic;
 
 namespace ExcelWeb.SL.Interfaces
@@ -7,6 +8,6 @@ namespace ExcelWeb.SL.Interfaces
     {
         ExcelPackage GetExcelFile(byte[] fileData);
         ExcelWorksheet GetExcelWorksheet(ExcelPackage excelFilePackage, string worksheetName);
-        List<string> LoopExcel(byte[] fileData);
+        List<Questionnaire> LoopExcel(byte[] fileData);
     }
 }

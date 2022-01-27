@@ -1,6 +1,7 @@
 ﻿using ExcelWeb.SL.Interfaces;
 using ExcelWeb.SL.Models.FileModels;
 using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace ExcelWeb.SL.Services
             _formService = formService;
         }
 
-        public async Task<OutputExcelFile> ConvertAsync(InputExcelFile inputModel)
+        public byte[] ConvertAsync(InputExcelFile inputModel)
         {
             try
             {
@@ -29,7 +30,9 @@ namespace ExcelWeb.SL.Services
                 var inputExcel = _formService.GetInputFormData(fileModel);
                 var outputExcel = _formService.GetOutputFormData(inputExcel);
 
-                return new OutputExcelFile();
+                var excelFile = _formService.GetOutputExcelFile(inputExcel);
+
+                return excelFile;
             }
             catch (Exception)
             {

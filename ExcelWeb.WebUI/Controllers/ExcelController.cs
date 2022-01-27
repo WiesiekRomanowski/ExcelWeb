@@ -25,11 +25,20 @@ namespace ExcelWeb.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddFormData(ExcelFileViewModel viewModel)
+        public IActionResult AddFormData(ExcelFileViewModel viewModel)
         {
             var inputModel = _mapper.Map<InputExcelFile>(viewModel);
-            var response = await _fileService.ConvertAsync(inputModel);
-            return View();
+            var bin = _fileService.ConvertAsync(inputModel);
+
+            //Response.Headers.Clear();
+
+            //Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            //Response.Headers.Add("content-length", bin.Length.ToString());
+            //Response.Headers.Add("content-disposition", "attachment; filename=\"Ankieta.xlsx\"");
+
+            return File(bin, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Ankieta.xlsx");
+
+            //return View();
         }
     }
 }

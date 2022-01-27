@@ -1,4 +1,5 @@
 ﻿using ExcelWeb.SL.Interfaces;
+using ExcelWeb.SL.Resolvers;
 using ExcelWeb.SL.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ namespace ExcelWeb.SL
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IExcelService, ExcelService>();
             services.AddTransient<IFormService, FormService>();
+            services.AddTransient<IInputFormResolver, InputFormResolver>();
 
             return services;
         }

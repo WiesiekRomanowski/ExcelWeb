@@ -5,7 +5,7 @@ namespace ExcelWeb.SL.Interfaces
 {
     public interface IFileService
     {
-        byte[] ConvertAsync(InputExcelFile inputModel);
+        byte[] Convert(InputExcelFile inputModel);
         byte[] GetFileData(IFormFile file);
     }
 }

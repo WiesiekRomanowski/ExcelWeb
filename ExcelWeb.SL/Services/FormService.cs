@@ -1,9 +1,11 @@
-﻿using ExcelWeb.SL.Interfaces;
+﻿using ExcelWeb.SL.Enums;
+using ExcelWeb.SL.Interfaces;
+using ExcelWeb.SL.Models.Common;
 using ExcelWeb.SL.Models.FileModels;
 using ExcelWeb.SL.Models.InputModels;
 using ExcelWeb.SL.Models.OutputModels;
-using OfficeOpenXml;
 using System;
+using System.Linq;
 
 namespace ExcelWeb.SL.Services
 {
@@ -11,25 +13,19 @@ namespace ExcelWeb.SL.Services
     {
         private readonly IExcelService _excelService;
 
+        private InputForm _inputForm;
+        private OutputForm _outputForm;
+
         public FormService(IExcelService excelService)
         {
             _excelService = excelService;
         }
 
-        private string[] _worksheetName = { "Sheet1" };
-
-        private ExcelPackage _excelFile;
-        private ExcelWorksheet _excelWorksheet;
-        private InputForm _inputForm;
-
         public InputForm GetInputFormData(ExcelFileModel fileModel)
         {
             try
             {
-                //SetExcelFile(fileModel.FileData);
-                //SetExcelWorksheet();
                 SetInputForm(fileModel.FileData);
-
                 return _inputForm;
             }
             catch (Exception)
@@ -42,7 +38,8 @@ namespace ExcelWeb.SL.Services
         {
             try
             {
-                return new OutputForm();
+                SetOutputForm(inputForm);
+                return _outputForm;
             }
             catch (Exception)
             {
@@ -50,32 +47,76 @@ namespace ExcelWeb.SL.Services
             }
         }
 
+        public byte[] GetOutputExcelFile(OutputForm outputForm)
+        {
+            return _excelService.LoopOutputExcel(outputForm.Questionnaries);
+        }
+
         private void SetInputForm(byte[] fileData)
         {
             _inputForm = new InputForm
             {
-                Questionnaries = _excelService.LoopExcel(fileData)
+                Questionnaries = _excelService.LoopInputExcel(fileData)
             };
         }
 
-        //TODO: tymczasowo na inputForm
-        public byte[] GetOutputExcelFile(InputForm inputForm)
+        private void SetOutputForm(InputForm inputForm)
         {
-            using var excelPackage = new ExcelPackage();
-            var worksheet = excelPackage.Workbook.Worksheets.Add("Sheet1");
+            _outputForm = new OutputForm();
+            foreach (var inputQuestionnaire in inputForm.Questionnaries)
+            {
+                var outputQuestionnaire = new Questionnaire();
+                foreach (var inputQuestion in inputQuestionnaire.Questions)
+                {
+                    var outputQuestion = new Question
+                    {
+                        Answer = inputQuestion.Answer
+                    };
+                    outputQuestionnaire.Questions.Add(outputQuestion);
 
-            worksheet.Cells["A1"].LoadFromCollection(inputForm.Questionnaries, true);
-            return excelPackage.GetAsByteArray();
+                    if (inputQuestion.QuestionType == QuestionType.MultiChoice)
+                    {
+                        foreach (var possibleAnswer in inputQuestion.PossibleAnswers)
+                        {
+                            var answerQuestion = new Question
+                            {
+                                Answer = IsHeader(inputQuestion) 
+                                    ? possibleAnswer 
+                                    : AnswerChecked(inputQuestion.PossibleAnswers, possibleAnswer, inputQuestion.Answer).ToString()
+                            };
+                            outputQuestionnaire.Questions.Add(answerQuestion);
+                        }
+                    }
+                }
+                _outputForm.Questionnaries.Add(outputQuestionnaire);
+            }
         }
 
-        private void SetExcelFile(byte[] fileData)
-        {
-            _excelFile = _excelService.GetExcelFile(fileData);
-        }
+        private bool IsHeader(Question question) 
+            => question.Name == question.Answer;
 
-        private void SetExcelWorksheet()
+        private bool AnswerChecked(string[] possibleAnswers, string currentAnswer, string answersChecked)
         {
-            _excelWorksheet = _excelService.GetExcelWorksheet(_excelFile, _worksheetName[0]);
+            var answersCheckedList = answersChecked.Split(';').Select(x => x.Trim()).ToList();
+            var answersCheckedDuplicate = answersChecked.Split(';').Select(x => x.Trim()).ToList();
+
+            if (answersCheckedList.Contains(currentAnswer))
+                return true;
+
+            if (currentAnswer != "inne")
+                return false;
+
+            foreach (var answerChecked in answersCheckedList)
+            {
+                if (possibleAnswers.Contains(answerChecked))
+                {
+                    answersCheckedDuplicate.Remove(answerChecked);
+                }
+            }
+
+            var duplicateCopy = answersCheckedDuplicate
+                .Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            return duplicateCopy.Any();
         }
     }
 }

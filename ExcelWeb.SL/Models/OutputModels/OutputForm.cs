@@ -1,6 +1,8 @@
-﻿namespace ExcelWeb.SL.Models.OutputModels
+﻿using ExcelWeb.SL.Models.Common;
+
+namespace ExcelWeb.SL.Models.OutputModels
 {
-    public class OutputForm
+    public class OutputForm : AbstractForm
     {
     }
 }

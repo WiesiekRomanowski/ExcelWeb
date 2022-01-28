@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using ExcelWeb.SL.Models.FileModels;
-using ExcelWeb.SL.Models.InputModels;
-using ExcelWeb.SL.Models.OutputModels;
 using ExcelWeb.WebUI.ViewModels;
 
 namespace ExcelWeb.WebUI.Mappings
@@ -11,7 +9,6 @@ namespace ExcelWeb.WebUI.Mappings
         public MappingProfile()
         {
             CreateMap<ExcelFileViewModel, InputExcelFile>();
-            CreateMap<InputForm, OutputForm>();
         }
     }
 }

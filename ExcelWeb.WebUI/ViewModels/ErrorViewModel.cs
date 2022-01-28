@@ -1,5 +1,3 @@
-using System;
-
 namespace ExcelWeb.WebUI.ViewModels
 {
     public class ErrorViewModel

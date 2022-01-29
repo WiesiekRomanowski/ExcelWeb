@@ -3,7 +3,6 @@ using ExcelWeb.SL.Interfaces;
 using ExcelWeb.SL.Models.FileModels;
 using ExcelWeb.WebUI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace ExcelWeb.WebUI.Controllers
 {
@@ -28,9 +27,9 @@ namespace ExcelWeb.WebUI.Controllers
         public IActionResult AddFormData(ExcelFileViewModel viewModel)
         {
             var inputModel = _mapper.Map<InputExcelFile>(viewModel);
-            var bin = _fileService.Convert(inputModel);
+            var outputModel = _fileService.Convert(inputModel);
 
-            return File(bin, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Ankieta.xlsx");
+            return File(outputModel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Ankieta.xlsx");
         }
     }
 }

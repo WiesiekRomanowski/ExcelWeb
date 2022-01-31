@@ -26,14 +26,14 @@ namespace ExcelWeb.SL.Services
                 using var excelPackage = new ExcelPackage(stream);
                 foreach (var worksheet in excelPackage.Workbook.Worksheets)
                 {
-                    for (int i = worksheet.Dimension.Start.Row; i < worksheet.Dimension.End.Row; i++)
+                    for (int i = worksheet.Dimension.Start.Row; i <= worksheet.Dimension.End.Row; i++)
                     {
                         var questionnaire = new Questionnaire
                         {
                             Counter = i - 1
                         };
 
-                        for (int j = worksheet.Dimension.Start.Column; j < worksheet.Dimension.End.Column; j++)
+                        for (int j = worksheet.Dimension.Start.Column; j <= worksheet.Dimension.End.Column; j++)
                         {
                             var question = new Question
                             {

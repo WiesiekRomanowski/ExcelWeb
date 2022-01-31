@@ -10,5 +10,6 @@
         SingleChoice = 6,
         MultiChoice = 7,
         Other = 8,
+        SingleChoiceAddName = 9,
     }
 }

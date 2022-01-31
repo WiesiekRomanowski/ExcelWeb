@@ -68,21 +68,26 @@ namespace ExcelWeb.SL.Services
                 var outputQuestionnaire = new Questionnaire();
                 foreach (var inputQuestion in inputQuestionnaire.Questions)
                 {
-                    var outputQuestion = new Question
+                    if (CanAddOutput(inputQuestion.QuestionType))
                     {
-                        Answer = inputQuestion.Answer
-                    };
-                    outputQuestionnaire.Questions.Add(outputQuestion);
+                        var outputQuestion = new Question
+                        {
+                            Answer = DoAddQuestionValue(inputQuestion) 
+                            ? $"{inputQuestion.PossibleAnswers.First()}: {inputQuestion.Answer}" 
+                            : inputQuestion.Answer
+                        };
+                        outputQuestionnaire.Questions.Add(outputQuestion);
+                    }
 
-                    if (inputQuestion.QuestionType == QuestionType.MultiChoice)
+                    if (IsMultichoice(inputQuestion.QuestionType))
                     {
                         foreach (var possibleAnswer in inputQuestion.PossibleAnswers)
                         {
                             var answerQuestion = new Question
                             {
                                 Answer = IsHeader(inputQuestion) 
-                                    ? possibleAnswer 
-                                    : AnswerChecked(inputQuestion.PossibleAnswers, possibleAnswer, inputQuestion.Answer).ToString()
+                                    ? $"{inputQuestion.Name}: {possibleAnswer}" 
+                                    : BoolToString(AnswerChecked(inputQuestion.PossibleAnswers, possibleAnswer, inputQuestion.Answer))
                             };
                             outputQuestionnaire.Questions.Add(answerQuestion);
                         }
@@ -92,10 +97,27 @@ namespace ExcelWeb.SL.Services
             }
         }
 
-        private bool IsHeader(Question question) 
+        private static bool DoAddQuestionValue(Question question)
+        {
+            return question.QuestionType == QuestionType.SingleChoiceAddName
+                       && question.Name == question.Answer;
+        }
+
+        private static bool IsMultichoice(QuestionType questionType)
+            => questionType == QuestionType.MultiChoice;
+
+        private static bool CanAddOutput(QuestionType questionType)
+        {
+            return questionType != QuestionType.DateTime 
+                && questionType != QuestionType.Email 
+                && questionType != QuestionType.Name
+                && questionType != QuestionType.MultiChoice;
+        }
+
+        private static bool IsHeader(Question question) 
             => question.Name == question.Answer;
 
-        private bool AnswerChecked(string[] possibleAnswers, string currentAnswer, string answersChecked)
+        private static bool AnswerChecked(string[] possibleAnswers, string currentAnswer, string answersChecked)
         {
             var answersCheckedList = answersChecked.Split(';').Select(x => x.Trim()).ToList();
             var answersCheckedDuplicate = answersChecked.Split(';').Select(x => x.Trim()).ToList();
@@ -107,16 +129,15 @@ namespace ExcelWeb.SL.Services
                 return false;
 
             foreach (var answerChecked in answersCheckedList)
-            {
                 if (possibleAnswers.Contains(answerChecked))
-                {
                     answersCheckedDuplicate.Remove(answerChecked);
-                }
-            }
 
             var duplicateCopy = answersCheckedDuplicate
                 .Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
             return duplicateCopy.Any();
         }
+
+        private static string BoolToString(bool value) 
+            => value ? "tak" : "nie";
     }
 }

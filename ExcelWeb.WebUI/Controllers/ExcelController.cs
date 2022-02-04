@@ -26,6 +26,11 @@ namespace ExcelWeb.WebUI.Controllers
         [HttpPost]
         public IActionResult AddFormData(ExcelFileViewModel viewModel)
         {
+            if (viewModel.File == null)
+            {
+                return View();
+            }
+
             var inputModel = _mapper.Map<InputExcelFile>(viewModel);
             var outputModel = _fileService.Convert(inputModel);
 

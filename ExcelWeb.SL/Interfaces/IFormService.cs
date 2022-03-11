@@ -8,6 +8,6 @@ namespace ExcelWeb.SL.Interfaces
     {
         InputForm GetInputFormData(ExcelFileModel fileModel);
         OutputForm GetOutputFormData(InputForm inputForm);
-        byte[] GetOutputExcelFile(OutputForm inputForm);
+        byte[] GetOutputExcelFile(OutputForm outputForm);
     }
 }
